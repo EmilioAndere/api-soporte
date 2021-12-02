@@ -5,18 +5,9 @@ require_once '../model/Reporte.php';
 
 class ReporteController extends Controller {
 
-    public function total_serve() {
+    public function report($mes) {
         $report = new Reporte();
-        $report->table("report_total_services");
-        $resp = $report->all();
-        $this->responseJson($resp);
-    }
-
-    public function between_date() {
-        $report = new Reporte();
-        $start = $_POST['start'];
-        $end = $_POST['end'];
-        $resp = $report->getData("CALL proc_report_between_date('$start', '$end')");
+        $resp = $report->getData("SELECT indicadores.nombre AS KPI, COUNT(*) AS TOTAL, MONTHNAME(indicador_equipo.fecha_inicio) AS MONTH FROM indicador_equipo INNER JOIN indicadores ON indicador_equipo.indicador_id = indicadores.id WHERE MONTH(indicador_equipo.fecha_inicio) = $mes GROUP BY indicador_equipo.indicador_id");
         $this->responseJson($resp);
     }
 
