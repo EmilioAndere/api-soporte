@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-11-2021 a las 01:30:25
+-- Tiempo de generación: 02-12-2021 a las 03:22:11
 -- Versión del servidor: 10.4.21-MariaDB
 -- Versión de PHP: 8.0.10
 
@@ -20,6 +20,32 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `aplicacion`
 --
+
+DELIMITER $$
+--
+-- Procedimientos
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proc_report_between_date` (IN `inicio` DATE, IN `fin` DATE)  SELECT
+	indicadores.nombre as indicador,
+    indicador_equipo.problema,
+    indicador_equipo.acciones as solucion,
+    indicador_equipo.fecha_inicio as inicio,
+    indicador_equipo.fecha_termino as termino,
+    equipos.num_serie,
+    CONCAT('Estacion ', equipos.estacion) as estacion,
+    empresas.nombre as ubicacion
+FROM 
+	indicador_equipo 
+INNER JOIN indicadores
+	ON indicador_equipo.indicador_id = indicadores.id
+INNER JOIN equipos
+	ON indicador_equipo.equipo_id = equipos.num_serie
+INNER JOIN empresas
+	ON equipos.empresa_id = empresas.id
+WHERE indicador_equipo.fecha_inicio
+	BETWEEN inicio AND fin$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -129,7 +155,9 @@ CREATE TABLE `equipos` (
 --
 
 INSERT INTO `equipos` (`num_serie`, `estacion`, `detalles`, `compra`, `can_install`, `tipo_id`, `empresa_id`) VALUES
-(5, 1, 'test', '2021-11-24', 0, 8, 5);
+(5, 1, 'test', '2021-11-24', 0, 8, 5),
+(9, 2, 'esto es otro test', '2021-11-26', 1, 8, 5),
+(10, 3, 'este test', '2021-11-26', 0, 7, 14);
 
 -- --------------------------------------------------------
 
@@ -169,7 +197,7 @@ CREATE TABLE `indicadores` (
 
 INSERT INTO `indicadores` (`id`, `nombre`, `descripcion`) VALUES
 (1, 'Soporte Tecnico', 'test'),
-(2, '', '');
+(2, 'Caída de Servicio', 'test');
 
 -- --------------------------------------------------------
 
@@ -193,7 +221,20 @@ CREATE TABLE `indicador_equipo` (
 --
 
 INSERT INTO `indicador_equipo` (`id`, `equipo_id`, `indicador_id`, `problema`, `acciones`, `estado`, `fecha_inicio`, `fecha_termino`) VALUES
-(1, 5, 1, 'test', 'test', 'Alto', '2021-11-25 01:21:34', NULL);
+(1, 5, 1, 'test', 'test', 'Alto', '2021-11-25 01:21:34', NULL),
+(4, 10, 2, 'test', 'test', 'Bajo', '2021-11-26 15:47:51', NULL),
+(5, 9, 1, 'test', 'test', 'Cerrado', '2021-12-30 15:48:46', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura Stand-in para la vista `report_total_services`
+-- (Véase abajo para la vista actual)
+--
+CREATE TABLE `report_total_services` (
+`servicio` varchar(45)
+,`total` bigint(21)
+);
 
 -- --------------------------------------------------------
 
@@ -225,6 +266,15 @@ CREATE TABLE `view_asignacion` (
 `Empleado` varchar(91)
 ,`Asignado` varchar(29)
 );
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `report_total_services`
+--
+DROP TABLE IF EXISTS `report_total_services`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `report_total_services`  AS SELECT `indicadores`.`nombre` AS `servicio`, count(0) AS `total` FROM (`indicador_equipo` join `indicadores` on(`indicador_equipo`.`indicador_id` = `indicadores`.`id`)) GROUP BY `indicadores`.`nombre` ;
 
 -- --------------------------------------------------------
 
@@ -338,7 +388,7 @@ ALTER TABLE `empresas`
 -- AUTO_INCREMENT de la tabla `equipos`
 --
 ALTER TABLE `equipos`
-  MODIFY `num_serie` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `num_serie` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `equipo_aplicacion`
@@ -356,7 +406,7 @@ ALTER TABLE `indicadores`
 -- AUTO_INCREMENT de la tabla `indicador_equipo`
 --
 ALTER TABLE `indicador_equipo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `tipos`
