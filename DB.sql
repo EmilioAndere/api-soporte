@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-12-2021 a las 04:17:09
+-- Tiempo de generación: 03-12-2021 a las 05:07:21
 -- Versión del servidor: 10.4.21-MariaDB
 -- Versión de PHP: 8.0.10
 
@@ -222,6 +222,26 @@ INSERT INTO `tipos` (`id`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `usuarios`
+--
+
+CREATE TABLE `usuarios` (
+  `id` int(11) NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `name`, `email`, `password`) VALUES
+(1, 'Emililo Andere Lopez', 'emilio.andere.lgmail.com', '$argon2i$v=19$m=65536,t=4,p=1$MlpwenplbWtVQUhESGFPMw$IM3Q//FygC+wQQYQa+q9tYYN8uotMrDFgDFC+vW21m8');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura Stand-in para la vista `view_asignacion`
 -- (Véase abajo para la vista actual)
 --
@@ -311,6 +331,12 @@ ALTER TABLE `tipos`
   ADD UNIQUE KEY `nombre` (`nombre`);
 
 --
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -367,6 +393,12 @@ ALTER TABLE `indicador_equipo`
 --
 ALTER TABLE `tipos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas

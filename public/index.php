@@ -1,6 +1,6 @@
 <?php
-
-// require_once '../config/ConnectionDB.php';
+session_start();
+require_once '../config/Auth.php';
 
 function getParams(){
     $params = array();
@@ -11,13 +11,19 @@ function getParams(){
     }
     return $params;
 }
-
-if($_GET['controller'] && $_GET['action']){
-    $controller = ucfirst($_GET['controller'])."Controller";
-    $action = $_GET['action'];
-    require "../Controllers/$controller.php";
-    $controller = new $controller();
-    call_user_func_array(array($controller, $action), getParams());
+if($_GET['action'] == 'logout'){
+    session_destroy();
+    exit;
 }
 
-// echo $_GET['id'];
+if($_GET['controller'] && $_GET['action']){
+    if(Auth::isLogged()){
+        $controller = ucfirst($_GET['controller'])."Controller";
+        $action = $_GET['action'];
+        require "../Controllers/$controller.php";
+        $controller = new $controller();
+        call_user_func_array(array($controller, $action), getParams());
+    }else{
+        exit;
+    }
+}

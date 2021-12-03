@@ -1,5 +1,8 @@
 RewriteEngine On
 
+RewriteRule ^login$ index.php?controller=usuario&action=auth
+RewriteRule ^logout$ index.php?controller=usuario&action=logout
+RewriteRule ^register$ index.php?controller=usuario&action=register
 RewriteRule ^report$ index.php?controller=reporte&action=report
 RewriteRule ^([a-zA-Z_]+)/([a-zA-Z_]+)$ index.php?controller=$1&action=$2
 RewriteRule ^([a-zA-Z_]+)/([a-zA-Z_]+)/([a-zA-Z0-9]+)$ index.php?controller=$1&action=$2&id=$3
