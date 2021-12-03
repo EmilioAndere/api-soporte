@@ -7,17 +7,21 @@ require_once '../model/Usuario.php';
 class UsuarioController extends Controller {
 
     public function auth() {
-        $user = new Usuario();
-        $resp = $user->where('email', "'".$_POST['email']."'");
-        if(!is_null($resp)){
-            if(password_verify($_POST['password'], $resp['password'])){
-                $_SESSION['token'] = bin2hex(random_bytes((15 - (15 % 2)) / 2));
-                echo $_SESSION['token'];
+        if(array_key_exists('token', $_SESSION)){
+            $this->responseJson(['msg' => 'You already logged in']);
+        }else{
+            $user = new Usuario();
+            $resp = $user->where('email', "'".$_POST['email']."'");
+            if(!is_null($resp)){
+                if(password_verify($_POST['password'], $resp['password'])){
+                    $_SESSION['token'] = bin2hex(random_bytes((15 - (15 % 2)) / 2));
+                    echo $_SESSION['token'];
+                }else{
+                    $this->responseJson(['msg' => 'User Unathorized']);
+                }
             }else{
                 $this->responseJson(['msg' => 'User Unathorized']);
             }
-        }else{
-            $this->responseJson(['msg' => 'User Unathorized']);
         }
     }
 

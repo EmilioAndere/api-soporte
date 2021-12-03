@@ -13,7 +13,7 @@ function getParams(){
 }
 if($_GET['action'] == 'logout'){
     session_destroy();
-    exit;
+    echo json_encode(['msg' => 'YOUR SESSION HAS BEEN CLOSED']);
 }
 
 if($_GET['controller'] && $_GET['action']){
