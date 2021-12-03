@@ -24,6 +24,7 @@ if($_GET['controller'] && $_GET['action']){
         $controller = new $controller();
         call_user_func_array(array($controller, $action), getParams());
     }else{
+        echo json_encode(['msg' => 'you have not logged in']);
         exit;
     }
 }
